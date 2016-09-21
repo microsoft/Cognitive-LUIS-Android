@@ -23,47 +23,6 @@ import java.util.Map;
 public class LUISUtility {
 
     /**
-     * Consumes LUIS API and returns an object containing the parsed LUIS reponse
-     * @param url A string containing the URL of the LUIS API to be consumed
-     * @return LUISResponse containing the content of the response sent by LUIS API
-     * @throws IOException
-     */
-    public static LUISResponse LUISHTTP(String url) throws IOException {
-        HttpURLConnection urlConnection;
-        LUISResponse response = null;
-        URL _url = new URL(url);
-        urlConnection = (HttpURLConnection) _url.openConnection();
-        try {
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            response = responseToLUISResponse(in);
-        } finally {
-            urlConnection.disconnect();
-        }
-        return response;
-    }
-
-    /**
-     * Converts the JSON response into a Java Object
-     * @param in an InputStream for the JSON response data
-     * @return LUISResponse containing the content of the response sent by LUIS API
-     * @throws IOException
-     */
-    public static LUISResponse responseToLUISResponse(InputStream in) throws IOException {
-        LUISResponse response = null;
-        String line;
-        String result = "";
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            while ((line = bufferedReader.readLine()) != null)
-                result += line;
-        }finally {
-            in.close();
-        }
-        response = new LUISResponse(result);
-        return response;
-    }
-
-    /**
      * Converts a JSONObject to a Map<String, Object>
      *
      * @param JSONobject A JSONObject that needs to be converted to a Map<String, Object>
