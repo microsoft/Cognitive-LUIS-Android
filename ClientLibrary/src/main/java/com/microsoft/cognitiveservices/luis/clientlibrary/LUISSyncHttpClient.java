@@ -48,11 +48,11 @@ public class LUISSyncHttpClient {
                 exception[0] = onFailureHandler(statusCode);
             }
         });
-        if(JSONresponse[0] == null){
-            throw new Exception("Request Failure due to null response");
-        }
         if(exception[0] != null){
             throw exception[0];
+        }
+        if(JSONresponse[0] == null){
+            throw new Exception("Request Failure due to null response");
         }
         return new LUISResponse(JSONresponse[0]);
     }
