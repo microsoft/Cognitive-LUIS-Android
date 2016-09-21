@@ -7,7 +7,6 @@ import java.util.List;
 public class LUISCompositeEntityChild {
     private String type;
     private String value;
-    private List<LUISCompositeEntityChild> children;
 
     /**
      * Constructs a LUIS Composite Entity Child from a JSON object
