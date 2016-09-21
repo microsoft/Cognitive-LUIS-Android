@@ -18,26 +18,9 @@ public class LUISResponse {
     private List<LUISCompositeEntity> compositeEntities;
     private LUISDialog dialog;
 
-    /**
-     * Constructs a LUIS Response from the JSON sent by LUIS
-     * @param JSONResponse a String containing the JSON response sent by LUIS
-     * @throws NullPointerException
-     * @throws IllegalArgumentException
-     */
-    public LUISResponse(String JSONResponse) throws NullPointerException,IllegalArgumentException {
-        if (JSONResponse == null)
+    public LUISResponse(JSONObject JSONresponse) {
+        if (JSONresponse == null)
             throw new NullPointerException("NULL JSON response");
-
-        if (JSONResponse.isEmpty())
-            throw new IllegalArgumentException("Invalid Subscription Key");
-
-        JSONObject JSONresponse;
-        //Create an empty JSONObject If there is a problem with the JSON sent by LUIS
-        try {
-            JSONresponse = new JSONObject(JSONResponse);
-        } catch (JSONException e) {
-            JSONresponse = new JSONObject();
-        }
 
         query = JSONresponse.optString("query");
         intents = new ArrayList<>();
@@ -65,7 +48,7 @@ public class LUISResponse {
         JSONArray JSONentities = JSONresponse.optJSONArray("entities");
         for (int i = 0; JSONentities != null && i < JSONentities.length(); i++) {
             JSONObject JSONentity = JSONentities.optJSONObject(i);
-            if(JSONentity != null) {
+            if (JSONentity != null) {
                 LUISEntity entity = new LUISEntity(JSONentity);
                 entities.add(entity);
             }
@@ -74,7 +57,7 @@ public class LUISResponse {
         JSONArray JSONcompositeEntities = JSONresponse.optJSONArray("compositeEntities");
         for (int i = 0; JSONcompositeEntities != null && i < JSONcompositeEntities.length(); i++) {
             JSONObject JSONcompositeEntity = JSONcompositeEntities.optJSONObject(i);
-            if(JSONcompositeEntity != null) {
+            if (JSONcompositeEntity != null) {
                 LUISCompositeEntity compositeEntity = new LUISCompositeEntity(JSONcompositeEntity);
                 compositeEntities.add(compositeEntity);
             }
