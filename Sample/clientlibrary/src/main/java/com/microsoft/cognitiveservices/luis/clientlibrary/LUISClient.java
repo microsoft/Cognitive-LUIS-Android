@@ -11,14 +11,11 @@ import java.util.regex.Pattern;
  */
 public class LUISClient {
 
-    private final String LUISURL = "https://api.projectoxford.ai/luis/v1/application";
-    private final String LUISPreviewURL;
-    private final String LUISPredictMask = "%s%s?id=%s&subscription-key=%s%s&q=%s";
-    private final String LUISReplyMask = "%s%s?id=%s&subscription-key=%s&contextid=%s%s&q=%s";
-    private final String LUISVerboseURL;
+    private final String LUISURL = "https://api.projectoxford.ai/luis/v2.0/apps";
+    private final String LUISPredictMask = "%s/%s?subscription-key=%s&q=%s&verbose=";
+    private final String LUISReplyMask = "%s/%s?subscription-key=%s&contextid=%s&q=%s&verbose=";
     private String appId;
     private String appKey;
-    private boolean preview;
     private boolean verbose;
 
     /**
@@ -26,11 +23,10 @@ public class LUISClient {
      *
      * @param appId   a String containing the Application Id
      * @param appKey  a String containing the Subscription Key
-     * @param preview a boolean to choose whether to use the published or the in preview version
      * @param verbose a boolean to choose whether or not to use the verbose version
      * @throws IllegalArgumentException
      */
-    public LUISClient(String appId, String appKey, boolean preview, boolean verbose) {
+    public LUISClient(String appId, String appKey, boolean verbose) {
         if (appId == null)
             throw new IllegalArgumentException("NULL Application Id");
         if (appId.isEmpty())
@@ -46,36 +42,19 @@ public class LUISClient {
 
         this.appId = appId;
         this.appKey = appKey;
-        this.preview = preview;
         this.verbose = verbose;
-        LUISPreviewURL = preview ? "/preview" : "";
-        LUISVerboseURL = verbose ? "&verbose=true" : "";
     }
 
     /**
      * Constructs a LUISClient with the corresponding user's App Id and Subscription Keys
-     * in non verbose version (if preview version is used
+     * in verbose version
      *
      * @param appId   a String containing the Application Id
      * @param appKey  a String containing the Subscription Key
-     * @param preview a boolean to choose whether to use the published or the in preview version
-     * @throws IllegalArgumentException
-     */
-    public LUISClient(String appId, String appKey, boolean preview) {
-        this(appId, appKey, preview, false);
-    }
-
-    /**
-     * Constructs a LUISClient with the corresponding user's App Id and Subscription Keys
-     * in non preview version
-     * in non verbose version (if preview version is used)
-     *
-     * @param appId  a String containing the Application Id
-     * @param appKey a String containing the Subscription Key
      * @throws IllegalArgumentException
      */
     public LUISClient(String appId, String appKey) {
-        this(appId, appKey, false, false);
+        this(appId, appKey, true);
     }
 
     /**
@@ -129,8 +108,6 @@ public class LUISClient {
             throws Exception {
         //TODO: When the reply can be used in the published version:
         //TODO: This condition has to be removed
-        if (!preview)
-            throw new RuntimeException("Reply can only be used with the preview version");
         if (text == null)
             throw new IllegalArgumentException("NULL text to predict");
         text = text.trim();
@@ -200,8 +177,6 @@ public class LUISClient {
      */
     public void reply(String text, LUISResponse response, final LUISResponseHandler responseHandler,
                       String forceSetParameterName) throws IOException {
-        if (!preview)
-            throw new RuntimeException("Reply can only be used with the preview version");
         if (text == null)
             throw new IllegalArgumentException("NULL text to predict");
         text = text.trim();
@@ -226,8 +201,13 @@ public class LUISClient {
     public String predictURLGen(String text) throws IOException {
         String encodedQuery;
         encodedQuery = URLEncoder.encode(text, "UTF-8");
-        return String.format(LUISPredictMask, LUISURL, LUISPreviewURL, appId, appKey
-                , LUISVerboseURL, encodedQuery);
+        String url = String.format(LUISPredictMask, LUISURL, appId, appKey, encodedQuery);
+        if(verbose){
+            url += "true";
+        } else {
+            url += "false";
+        }
+        return url;
     }
 
     /**
@@ -243,8 +223,13 @@ public class LUISClient {
             throws IOException {
         String encodedQuery;
         encodedQuery = URLEncoder.encode(text, "UTF-8");
-        String url = String.format(LUISReplyMask, LUISURL, LUISPreviewURL, appId, appKey,
-                response.getDialog().getContextId(), LUISVerboseURL, encodedQuery);
+        String url = String.format(LUISReplyMask, LUISURL, appId, appKey,
+                response.getDialog().getContextId(), encodedQuery);
+        if(verbose){
+            url += "true";
+        } else {
+            url += "false";
+        }
         if (forceSetParameterName != null && !forceSetParameterName.isEmpty()) {
             url += String.format("&forceset=%s", forceSetParameterName);
         }

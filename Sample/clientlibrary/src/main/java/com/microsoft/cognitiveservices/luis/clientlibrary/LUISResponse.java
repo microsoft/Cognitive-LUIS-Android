@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class LUISResponse {
     private String query;
+    private LUISIntent topScoringIntent;
     private List<LUISIntent> intents;
     private List<LUISEntity> entities;
     private List<LUISCompositeEntity> compositeEntities;
@@ -32,10 +33,12 @@ public class LUISResponse {
 
 
         JSONObject JSONtopIntent = JSONresponse.optJSONObject("topScoringIntent");
-        if (JSONtopIntent != null) {
-            intents.add(new LUISIntent(JSONtopIntent));
+        topScoringIntent = JSONtopIntent != null ? new LUISIntent(JSONtopIntent) : null;
+
+        JSONArray JSONintents = JSONresponse.optJSONArray("intents");
+        if (JSONintents == null) {
+            intents.add(topScoringIntent);
         } else {
-            JSONArray JSONintents = JSONresponse.optJSONArray("intents");
             for (int i = 0; JSONintents != null && i < JSONintents.length(); i++) {
                 JSONObject JSONintent = JSONintents.optJSONObject(i);
                 if (JSONintent != null) {

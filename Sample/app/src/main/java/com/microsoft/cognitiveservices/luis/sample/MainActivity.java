@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 String appKey = String.valueOf(editTextAppKey.getText());
                 String textPredict = String.valueOf(editTextPredict.getText());
                 try {
-                    LUISClient client = new LUISClient(appId, appKey, true, true);
+                    LUISClient client = new LUISClient(appId, appKey, true);
                     client.predict(textPredict, new LUISResponseHandler() {
                         @Override
                         public void onSuccess(LUISResponse response) {
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 String appKey = String.valueOf(editTextAppKey.getText());
                 String textPredict = String.valueOf(editTextPredict.getText());
                 try {
-                    LUISClient client = new LUISClient(appId, appKey, true, true);
+                    LUISClient client = new LUISClient(appId, appKey, true);
                     client.reply(textPredict, previousResponse, new LUISResponseHandler() {
                         @Override
                         public void onSuccess(LUISResponse response) {
