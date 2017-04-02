@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class LUISClient {
 
-    private final String LUISURL = "https://api.projectoxford.ai/luis/v2.0/apps";
+    private final String LUISURL = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps";
     private final String LUISPredictMask = "%s/%s?subscription-key=%s&q=%s&verbose=";
     private final String LUISReplyMask = "%s/%s?subscription-key=%s&contextid=%s&q=%s&verbose=";
     private String appId;
